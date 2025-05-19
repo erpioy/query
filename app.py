@@ -7,14 +7,12 @@ app.config.from_object(config)
 print(app.config['TOKEN_KEY'])
 
 @app.route('/')
-def hello_world():
+def index_page():
     return render_template("index.html")
 
-@app.route('/login')
-def login_page():
-    return '这是登录页面'
-
-
+@app.route('/signup')
+def signup_page():
+    return render_template("signup.html")
 
 if __name__ == '__main__':
     app.run(debug=True)

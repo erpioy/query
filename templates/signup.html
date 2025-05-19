@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title%}注册{% endblock %}
+{% block body%}
+<div class="container my-5">
+      <div class="text-center">
+        <h2>Lorem, ipsum dolor.</h2>
+      </div>
+      <div class="row">
+        <div class="col-lg-5 justify-content-center my-5">
+        <div class="form-floating my-3">
+          <input type="text" id="name" placeholder="" class="form-control" />
+          <label class="form-label">用户名</label>
+        </div>
+        <div class="form-floating my-3">
+          <input type="password" id="passwd" placeholder="" class="form-control" />
+          <label class="form-label">密码</label>
+        </div>
+        <div class="form-floating my-3">
+          <input type="password" id="informwd" placeholder="" class="form-control" />
+          <label class="form-label">确认密码</label>
+        </div>
+        <div class="form-floating my-3">
+          <input type="email" id="email" placeholder="" class="form-control" />
+          <label class="form-label">邮箱</label>
+        </div>
+        <div class="form-floating my-3">
+          <input type="text" id="code" placeholder="" class="form-control" />
+          <label class="form-label">验证码</label>
+        </div>
+        </div>
+        <div class="col-lg-7 justify-content-center my-5">
+          <div>你说我是错的，那你最好证明你是对的</div>
+        </div>
+
+      </div>
+      
+    </div>
+{% endblock %}
