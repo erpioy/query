@@ -1,10 +1,8 @@
-from flask import Flask,render_template
+from flask import Flask,render_template,flash
 import config
 
 app = Flask(__name__)
 app.config.from_object(config)
-
-print(app.config['TOKEN_KEY'])
 
 @app.route('/')
 def index_page():
