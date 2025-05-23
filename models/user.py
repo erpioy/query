@@ -1,14 +1,55 @@
 from exts import db
+from enum import Enum
+from datetime import datetime
+from shortuuid import uuid
+from werkzeug.security import generate_password_hash
 
-# User继承自db.Model  , 用操作对象的方式来写SQL语句
-class User(db.Model):
-    # 建表操作，相当于
-    # CREATE TABLE user(
-    # id INT PRIMARY KEY,
-    # username VARCHAR(100),
-    # passwd VARCHAR(100)
-    # );
-    __tablename__ = "user"
+class PermissionEnum(Enum):
+    BOAED = "板块"
+    POST = "帖子"
+    COMMENT = "评论"
+    FRONT_USER = "前台用户"
+    CMS_USER = "后台用户"
+
+# 创建一个permission表（id，name）
+class PermissionModel(db.Model):
+    __tablename__ = "permission"
     id = db.Column(db.Integer,primary_key=True)
-    username = db.Column(db.String(100))
-    passwd = db.Column(db.String(100))
+    name = db.Column(db.Enum(PermissionEnum),nullable=False,unique=True)
+
+# 创建一个中间关系，通过外键建立关系
+role_permission_table = db.Table(
+    "role_permission_table",
+    db.Column("role_id",db.Integer,db.ForeignKey("role.id")),
+    db.Column("permission_id",db.Integer,db.ForeignKey("permission.id"))
+)
+
+# 创建一个role表（id，name，desc，create_time）
+class RoleModel(db.Model):
+    __tablename__ = "role"
+    id = db.Column(db.Integer,primary_key=True)
+    name = db.Column(db.String(50),nullable=False)
+    desc = db.Column(db.String(200),nullable=False)
+    create_time = db.Column(db.DateTime,default=datetime.now)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+
+    permission = db.relationship("PermissionModel",secondary=role_permission_table,backref="roles")
+
+# 创建一个user表（
+# 把函数传进去，插入时自动调用,每条记录生成一个新的ID  如果使用uuid()，会立即执行函数，所有记录用同一个ID
+class UserModel(db.Model):
+    __tablename__ = "user"
+    id = db.Column(db.String(100),primary_key=True,default=uuid)
+    username = db.Column(db.String(50),nullable=False,unique=True)
+    password = db.Column(db.String(200),nullable=False)
+    email = db.Column(db.String(50),nullable=False,unique=True)
+    avatar = db.Column(db.String(100))
+    signature = db.Column(db.String(100))
+    join_time = db.Column(db.DateTime,default=datetime.now)
+    is_staff = db.Column(db.Boolean,default=False)
+    is_active = db.Column(db.Boolean,default=True)
+
+    # 外键
+    role_id = db.Column(db.Integer,db.ForeignKey("role.id"))
+    role = db.relationship("RoleModel",backref="users")
+    
+
