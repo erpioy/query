@@ -1,13 +1,35 @@
-{% extends "base.html" %} {% block title%}注册{% endblock %} {% block body%}
+{% extends "base.html" %} {% block title%}注册{% endblock %} {% block head %}
+<!-- 在 <head> 中添加 -->
+<link
+  rel="stylesheet"
+  href="https://cdn.staticfile.net/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css"
+/>
+<!-- <style>
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px white inset !important; /* 用白色覆盖蓝色背景 */
+    -webkit-text-fill-color: #333 !important; /* 设置文字颜色 */
+    transition: background-color 5000s ease-in-out 0s; /* 防止 Chrome 偶尔恢复默认样式 */
+  }
+</style> -->
+{% endblock %} {% block body%}
 <div class="container my-5">
   <div class="text-center">
     <h2>注册</h2>
   </div>
   <div class="row justify-content-center">
     <div class="col-lg-5 my-5">
-      <form method="POST" action="">
+      <form method="POST" action="" autocomplete="off">
         <div class="form-floating my-3">
-          <input type="text" id="name" name="name" placeholder="" class="form-control" />
+          <input
+            type="text"
+            id="name"
+            name="name"
+            placeholder=""
+            class="form-control"
+          />
           <label class="form-label">用户名</label>
         </div>
         <div class="form-floating my-3">
@@ -19,6 +41,13 @@
             class="form-control"
           />
           <label class="form-label">密码</label>
+          <span
+            class="position-absolute top-50 end-0 translate-middle-y me-3"
+            style="cursor: pointer"
+            id="togglePassword"
+          >
+            <i class="bi bi-eye" id="eye"></i>
+          </span>
         </div>
         <div class="form-floating my-3">
           <input
@@ -31,7 +60,13 @@
           <label class="form-label">确认密码</label>
         </div>
         <div class="form-floating my-3">
-          <input type="email" id="email" name="email" placeholder="" class="form-control" />
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder=""
+            class="form-control"
+          />
           <label class="form-label">邮箱</label>
         </div>
         <div class="my-3 text-center">
@@ -44,4 +79,33 @@
     </div>
   </div>
 </div>
+
+<script>
+  const togglePassword = document.querySelector("#togglePassword");
+  const passwdInput = document.querySelector("#passwd");
+  const eye_icon = document.querySelector("#eye");
+  let isHolding = false;
+
+  function holdAction() {
+    if (!isHolding) return;
+    passwdInput.type = "text";
+    eye_icon.classList.replace("bi-eye", "bi-eye-slash");
+    requestAnimationFrame(holdAction);
+  }
+
+  togglePassword.addEventListener("mousedown", () => {
+    isHolding = true;
+    holdAction();
+  });
+  togglePassword.addEventListener("mouseup", () => {
+    isHolding = false;
+    passwdInput.type = "password";
+    eye_icon.classList.replace("bi-eye-slash", "bi-eye");
+  });
+  togglePassword.addEventListener("pointerleave", () => {
+    isHolding = false;
+    passwdInput.type = "password";
+    eye_icon.classList.replace("bi-eye-slash", "bi-eye");
+  });
+</script>
 {% endblock %}
