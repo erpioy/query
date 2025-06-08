@@ -5,7 +5,7 @@ from shortuuid import uuid
 from werkzeug.security import generate_password_hash
 
 class PermissionEnum(Enum):
-    BOAED = "板块"
+    BOARD = "板块"
     POST = "帖子"
     COMMENT = "评论"
     FRONT_USER = "前台用户"
@@ -32,7 +32,7 @@ class RoleModel(db.Model):
     desc = db.Column(db.String(200),nullable=False)
     create_time = db.Column(db.DateTime,default=datetime.now)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
 
-    permission = db.relationship("PermissionModel",secondary=role_permission_table,backref="roles")
+    permissions = db.relationship("PermissionModel",secondary=role_permission_table,backref="roles")
 
 # 创建一个user表（
 # 把函数传进去，插入时自动调用,每条记录生成一个新的ID  如果使用uuid()，会立即执行函数，所有记录用同一个ID

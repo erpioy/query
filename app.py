@@ -6,9 +6,10 @@ from blueprints.front import bp as front_bp
 from blueprints.user import bp as user_bp
 from flask_migrate import Migrate
 from models import user
-import click
+import commands
 
 app = Flask(__name__)
+# 用于加载config模块
 app.config.from_object(config)
 app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://root:830849@localhost/myquery"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -21,6 +22,10 @@ app.register_blueprint(cms_bp)
 app.register_blueprint(front_bp)
 app.register_blueprint(user_bp)
 
+# 添加命令
+app.cli.command("create-permission")(commands.create_permission)
+app.cli.command("create-role")(commands.create_role)
+
 with app.app_context():
     db.create_all()
 
@@ -28,9 +33,7 @@ with app.app_context():
 def signup_page():
     return render_template("signup.html")
 
-@app.cli.command("my-command")
-def my():
-    click.echo("welcome to my world")
+
 
 if __name__ == '__main__':
     app.run(debug=True)
