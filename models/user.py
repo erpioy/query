@@ -2,7 +2,7 @@ from exts import db
 from enum import Enum
 from datetime import datetime
 from shortuuid import uuid
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash,check_password_hash
 
 class PermissionEnum(Enum):
     BOARD = "板块"
@@ -40,7 +40,8 @@ class UserModel(db.Model):
     __tablename__ = "user"
     id = db.Column(db.String(100),primary_key=True,default=uuid)
     username = db.Column(db.String(50),nullable=False,unique=True)
-    password = db.Column(db.String(200),nullable=False)
+    # password = db.Column(db.String(200),nullable=False)  修改为：
+    _password = db.Column(db.String(200),nullable=False)
     email = db.Column(db.String(50),nullable=False,unique=True)
     avatar = db.Column(db.String(100))
     signature = db.Column(db.String(100))
@@ -51,5 +52,25 @@ class UserModel(db.Model):
     # 外键
     role_id = db.Column(db.Integer,db.ForeignKey("role.id"))
     role = db.relationship("RoleModel",backref="users")
+
+    # *args 元组，**kwargs 字典。args变为一个元组，kwargs变为一个字典
+    def __init__(self,*args,**kwargs):
+        if "password" in kwargs:
+            self.password = kwargs.get('password')
+            kwargs.pop("password")
+        super(UserModel,self).__init__(*args,**kwargs)
+
+    # 将这个函数包装成一个属性对象,把方法伪装成属性，标记为读
+    @property
+    def password(self):
+        return self._password
+    # 当这个属性被调用时，自动执行这段函数，标记为写
+    @password.setter
+    def password(self,raw_password):
+        self._password = generate_password_hash(raw_password)
+
+    def check_password(self,raw_password):
+        result = check_password_hash(self.password,raw_password)
+        return result
     
 

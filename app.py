@@ -25,14 +25,15 @@ app.register_blueprint(user_bp)
 # 添加命令
 app.cli.command("create-permission")(commands.create_permission)
 app.cli.command("create-role")(commands.create_role)
+app.cli.command("create-test-user")(commands.create_test_user)
 
 with app.app_context():
+    #db.drop_all()
     db.create_all()
 
 @app.route('/signup')
 def signup_page():
     return render_template("signup.html")
-
 
 
 if __name__ == '__main__':
