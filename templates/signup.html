@@ -68,6 +68,24 @@
             class="form-control"
           />
           <label class="form-label">邮箱</label>
+          <button
+            type="button"
+            class="btn btn-outline-secondary position-absolute top-50 end-0 translate-middle-y me-2"
+            id="sendCodeBtn"
+            style="z-index: 2"
+          >
+            发送验证码
+          </button>
+        </div>
+        <div class="form-floating my-3">
+          <input
+            type="text"
+            id="verification_code"
+            name="verification_code"
+            placeholder=""
+            class="form-control"
+          />
+          <label class="form-label">验证码</label>
         </div>
         <div class="my-3 text-center">
           <button class="btn btn-primary w-100" type="submit">注册</button>
@@ -106,6 +124,20 @@
     isHolding = false;
     passwdInput.type = "password";
     eye_icon.classList.replace("bi-eye-slash", "bi-eye");
+  });
+  // 发送验证码
+  const cerificiation_btn = document.querySelector('#sendCodeBtn');
+
+  cerificiation_btn.addEventListener('click',()=>{
+    const input_email = document.querySelector('#email');
+    const email = input_email.value;
+    console.log(email);
+
+    fetch(`user/mail/captcha/${email}`)
+      .then(response=>response.json)
+      .then(result=>{
+        alert('验证码发送成功,请及时接收n_n');
+      });
   });
 </script>
 {% endblock %}

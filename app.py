@@ -1,5 +1,5 @@
 from flask import Flask,render_template
-from exts import db
+from exts import db,mail
 import config
 from blueprints.cms import bp as cms_bp
 from blueprints.front import bp as front_bp
@@ -15,6 +15,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://root:830849@localhost/m
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
+mail.init_app(app)
 
 migrate = Migrate(app,db)
 # 注册蓝图
@@ -26,6 +27,7 @@ app.register_blueprint(user_bp)
 app.cli.command("create-permission")(commands.create_permission)
 app.cli.command("create-role")(commands.create_role)
 app.cli.command("create-test-user")(commands.create_test_user)
+app.cli.command("create-admin")(commands.create_admin)
 
 with app.app_context():
     #db.drop_all()

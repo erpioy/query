@@ -47,23 +47,29 @@ def create_role():
 # 创建测试用户
 def create_test_user():
     admin_role = RoleModel.query.filter_by(name="管理员").first()
+    zhangsan = UserModel(username="张三",email="zhangsan@query.com",password="111111",is_staff=True,role=admin_role)
+    
     operator_role = RoleModel.query.filter_by(name="运营").first()
+    lisi = UserModel(username="李四",email="lisi@query.com",password="111111",is_staff=True,role=operator_role)
+    
     inpector_role = RoleModel.query.filter_by(name="稽查").first()
+    wangwu = UserModel(username="王五2",email="wangwu@query.com",password="111111",is_staff=True,role=inpector_role)
     
-    zhangsan = UserModel(username="张三",email="zhangsan@query.com",password="111111",is_staff=True)
-
-    lisi = UserModel(username="李四",email="lisi@query.com",password="111111",is_staff=True)
-
-    wangwu = UserModel(username="王五2",email="wangwu@query.com",password="111111",is_staff=True)
-
     db.session.add_all([zhangsan,lisi,wangwu])
-    
-    zhangsan.role=admin_role
-    lisi.role=operator_role
-    wangwu.role=inpector_role
-
     db.session.commit()
     click.echo('测试用户创建成功^_^')
+
+@click.option("--username",'-u')
+@click.option("--email",'-e')
+@click.option("--password",'-p')
+def create_admin(username,email,password):
+    admin_role = RoleModel.query.filter_by(name="管理员").first()
+    admin_user = UserModel(username=username,email=email,password=password,is_staff=True,role=admin_role)
+    db.session.add(admin_user)
+    db.session.commit()
+    click.echo("管理员创建成功^_^")
+
+
 
 
 
