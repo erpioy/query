@@ -34,7 +34,7 @@ class RoleModel(db.Model):
 
     permissions = db.relationship("PermissionModel",secondary=role_permission_table,backref="roles")
 
-# 创建一个user表（
+# 创建一个user表
 # 把函数传进去，插入时自动调用,每条记录生成一个新的ID  如果使用uuid()，会立即执行函数，所有记录用同一个ID
 class UserModel(db.Model):
     __tablename__ = "user"

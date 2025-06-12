@@ -134,9 +134,19 @@
     console.log(email);
 
     fetch(`user/mail/captcha/${email}`)
-      .then(response=>response.json)
-      .then(result=>{
-        alert('验证码发送成功,请及时接收n_n');
+      .then(response => {
+        if (!response.ok){
+          throw new Error('请求失败');
+        }
+        return response.json()
+      })
+      .then(data => {
+        if (data.status === "success"){
+          alert('验证码已发送！');
+        }
+      })
+      .catch(error => {
+        alert("发送验证码失败："+ error.meessage);
       });
   });
 </script>
