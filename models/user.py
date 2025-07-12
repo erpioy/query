@@ -4,7 +4,12 @@ from datetime import datetime
 from shortuuid import uuid
 from werkzeug.security import generate_password_hash,check_password_hash
 
+"""
+功能：创建表模型
+"""
+
 class PermissionEnum(Enum):
+    # 推荐枚举变量名，写成大写
     BOARD = "板块"
     POST = "帖子"
     COMMENT = "评论"
@@ -15,9 +20,11 @@ class PermissionEnum(Enum):
 class PermissionModel(db.Model):
     __tablename__ = "permission"
     id = db.Column(db.Integer,primary_key=True)
+    # 限制该字段只能存储PermissionEnum中定义的枚举值
     name = db.Column(db.Enum(PermissionEnum),nullable=False,unique=True)
 
 # 创建一个中间关系，通过外键建立关系
+# SQLAlchemy 会自动处理表的创建顺序，保证父表先被创建,关联表
 role_permission_table = db.Table(
     "role_permission_table",
     db.Column("role_id",db.Integer,db.ForeignKey("role.id")),
@@ -30,9 +37,11 @@ class RoleModel(db.Model):
     id = db.Column(db.Integer,primary_key=True)
     name = db.Column(db.String(50),nullable=False)
     desc = db.Column(db.String(200),nullable=False)
-    create_time = db.Column(db.DateTime,default=datetime.now)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+    create_time = db.Column(db.DateTime,default=datetime.now) 
 
+    # 通过中间表来建立多对多关系，并在PermissionModel类中自动创建roles属性
     permissions = db.relationship("PermissionModel",secondary=role_permission_table,backref="roles")
+    users = db.relationship("UserModel",back_populates="role")
 
 # 创建一个user表
 # 把函数传进去，插入时自动调用,每条记录生成一个新的ID  如果使用uuid()，会立即执行函数，所有记录用同一个ID
@@ -51,7 +60,10 @@ class UserModel(db.Model):
 
     # 外键
     role_id = db.Column(db.Integer,db.ForeignKey("role.id"))
-    role = db.relationship("RoleModel",backref="users")
+    # ForeignKey是relationship的基础，relationship必须依赖外键列才能正常工作
+    # 如果这样定义的话，自动在 RoleModel 类中创建反向属性 users，能够使RoleModel类的实例通过“.users”属性访问到绑定了该角色的用户，以列表的形式返回
+    # role = db.relationship("RoleModel",backref="users")
+    role = db.relationship("RoleModel",back_populates="users")
 
     # *args 元组，**kwargs 字典。args变为一个元组，kwargs变为一个字典
     def __init__(self,*args,**kwargs):

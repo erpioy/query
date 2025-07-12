@@ -1,4 +1,5 @@
-from flask import Flask,render_template
+from flask import Flask
+from flask_wtf.csrf import CSRFProtect
 from exts import db,mail,cache
 import config
 from blueprints.cms import bp as cms_bp
@@ -10,10 +11,11 @@ import commands
 from my_celery import make_celery
 
 app = Flask(__name__)
-# 用于加载config模块
+
+# 用于加载config模块中的配置信息（大写字母）
 app.config.from_object(config)
-app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://root:830849@localhost/myquery"
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+csrf = CSRFProtect(app)
 
 db.init_app(app)
 mail.init_app(app)
@@ -34,15 +36,10 @@ app.cli.command("create-role")(commands.create_role)
 app.cli.command("create-test-user")(commands.create_test_user)
 app.cli.command("create-admin")(commands.create_admin)
 
-with app.app_context():
-    #db.drop_all()
-    db.create_all()
-
-@app.route('/signup')
-def signup_page():
-    return render_template("signup.html")
-
-
-
+# with app.app_context():
+    # db.drop_all()
+    # db.create_all()
+   
 if __name__ == '__main__':
     app.run(debug=True)
+    

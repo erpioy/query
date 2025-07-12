@@ -1,0 +1,106 @@
+{% extends "base.html" %} {% block title%}登录{% endblock %} {% block head %}
+<link
+  rel="stylesheet"
+  href="https://cdn.staticfile.net/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css"
+/>
+{% endblock %} {% block body%}
+
+<div class="container my-4">
+  <div class="text-center">
+    <h2>登录</h2>
+  </div>
+  <div class="row justify-content-center">
+    <div class="col-lg-4 my-3">
+      <!-- 点击类型为“type=submit”的按钮，将表单数据提交给对应的url -->
+      <form
+        method="POST"
+        action="{{ url_for('user.login') }}"
+        autocomplete="off"
+      >
+      {{ form.hidden_tag() }}  <!-- 应该包含 csrf_token 字段 -->
+        <div class="form-floating my-3">
+          <input
+            type="text"
+            id="name"
+            name="username"
+            placeholder=""
+            class="form-control"
+          />
+          <label class="form-label">用户名</label>
+        </div>
+        <div class="form-floating my-1">
+          <input
+            type="password"
+            id="passwd"
+            name="password"
+            placeholder=""
+            class="form-control"
+          />
+          <label class="form-label">密码</label>
+          <span
+            class="position-absolute top-50 end-0 translate-middle-y me-3"
+            style="cursor: pointer"
+            id="togglePassword"
+          >
+            <i class="bi bi-eye" id="eye"></i>
+          </span>
+        </div>
+
+        <div class="my-1 text-center">
+          <button class="btn btn-primary" style="width: 32%" type="submit">
+            登录
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row justify-content-center">
+    <div
+      class="col-md-6 col-lg-4 position-fixed bottom-0 end-0 p-3"
+      style="z-index: 11"
+    >
+      {%with messages = get_flashed_messages() %} {%if messages %}
+      <div class="form-group">
+        <ul>
+          {% for message in messages %}
+          <li class="text-danger">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %} {% endwith %}
+    </div>
+  </div>
+</div>
+
+<script>
+  const togglePassword = document.querySelector("#togglePassword");
+  const passwdInput = document.querySelector("#passwd");
+  const eye_icon = document.querySelector("#eye");
+  let isHolding = false;
+
+  function holdAction() {
+    if (!isHolding) return;
+    passwdInput.type = "text";
+    eye_icon.classList.replace("bi-eye", "bi-eye-slash");
+    requestAnimationFrame(holdAction);
+  }
+
+  togglePassword.addEventListener("mousedown", () => {
+    isHolding = true;
+    holdAction();
+  });
+  togglePassword.addEventListener("mouseup", () => {
+    isHolding = false;
+    passwdInput.type = "password";
+    eye_icon.classList.replace("bi-eye-slash", "bi-eye");
+  });
+  togglePassword.addEventListener("pointerleave", () => {
+    isHolding = false;
+    passwdInput.type = "password";
+    eye_icon.classList.replace("bi-eye-slash", "bi-eye");
+  });
+</script>
+{% endblock %}

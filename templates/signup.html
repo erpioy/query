@@ -15,18 +15,20 @@
   }
 </style> -->
 {% endblock %} {% block body%}
-<div class="container my-5">
+<div class="container my-4">
   <div class="text-center">
     <h2>注册</h2>
   </div>
   <div class="row justify-content-center">
-    <div class="col-lg-5 my-5">
-      <form method="POST" action="" autocomplete="off">
+    <div class="col-lg-4 my-3">
+      <!-- 点击类型为“type=submit”的按钮，将表单数据提交给对应的url -->
+      <form method="POST" action="{{ url_for('user.signup') }}" autocomplete="off">
+        {{ form.hidden_tag() }}  <!-- 应该包含 csrf_token 字段 -->
         <div class="form-floating my-3">
           <input
             type="text"
             id="name"
-            name="name"
+            name="username"
             placeholder=""
             class="form-control"
           />
@@ -36,7 +38,7 @@
           <input
             type="password"
             id="passwd"
-            name="passwd"
+            name="password"
             placeholder=""
             class="form-control"
           />
@@ -53,7 +55,7 @@
           <input
             type="password"
             id="confirmwd"
-            name="confirmwd"
+            name="confirm_password"
             placeholder=""
             class="form-control"
           />
@@ -81,7 +83,7 @@
           <input
             type="text"
             id="verification_code"
-            name="verification_code"
+            name="captcha"
             placeholder=""
             class="form-control"
           />
@@ -92,8 +94,26 @@
         </div>
       </form>
       <div class="my-3 text-center">
-        已有账号？立即<a href="/login">登录</a>
+        已有账号？立即<a href="{{ url_for('user.login') }}">登录</a>
       </div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4 position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+      {%with messages = get_flashed_messages() %}
+        {%if messages %}
+          <div class="form-group">
+            <ul>
+              {% for message in messages %}
+                <li class="text-danger">{{ message }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endif %}
+      {% endwith %}
     </div>
   </div>
 </div>
@@ -133,7 +153,7 @@
     const email = input_email.value;
     console.log(email);
 
-    fetch(`user/mail/captcha/${email}`)
+    fetch(`/user/mail/captcha/${email}`)
       .then(response => {
         if (!response.ok){
           throw new Error('请求失败');

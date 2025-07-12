@@ -17,7 +17,7 @@
   <body>
     <nav
       class="navbar navbar-expand-lg fixed-top"
-      style="background-color: #e3f2fd"
+      style="background-color: #cdb7df"
     >
       <div class="container">
         <a href="#" class="navbar-brand">Query</a>
@@ -48,8 +48,9 @@
             </button>
           </form>
           <ul class="navbar-nav ms-auto">
-            <li class="nav-item"><a href="#" class="nav-link">登录</a></li>
-            <li class="nav-item"><a href="/signup" class="nav-link">注册</a></li>
+            <!-- 这里的href是视图函数端点，而不是url -->
+            <li class="nav-item"><a href="{{ url_for('user.login') }}" class="nav-link">登录</a></li>
+            <li class="nav-item"><a href="{{ url_for('user.signup') }}" class="nav-link">注册</a></li>
           </ul>
         </div>
       </div>

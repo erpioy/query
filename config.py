@@ -18,3 +18,8 @@ CACHE_KEY_PREFIX = ""
 # Celery配置
 CELERY_BROKER_URL = "redis://127.0.0.1:6379/0"
 CELERY_RESULT_BACKEND = "redis://127.0.0.1:6379/0"
+
+# 数据库配置
+SQLALCHEMY_DATABASE_URI = "mysql+pymysql://root:830849@localhost/myquery"
+SQLALCHEMY_TRACK_MODIFICATIONS = False
+
