@@ -25,6 +25,8 @@
             name="username"
             placeholder=""
             class="form-control"
+            required=""
+            value="{{ form.username.data if form.username.data else '' }}"
           />
           <label class="form-label">用户名</label>
         </div>
@@ -35,6 +37,7 @@
             name="password"
             placeholder=""
             class="form-control"
+            required=""
           />
           <label class="form-label">密码</label>
           <span
@@ -46,12 +49,15 @@
           </span>
         </div>
 
-        <div class="my-1 text-center">
-          <button class="btn btn-primary" style="width: 32%" type="submit">
+        <div class="my-3 text-center">
+          <button class="btn btn-primary w-100" type="submit">
             登录
           </button>
         </div>
       </form>
+      <div class="my-3 text-center">
+        没有账号？立即<a href="{{ url_for('user.signup') }}">注册</a>
+      </div>
     </div>
   </div>
 </div>

@@ -1,10 +1,14 @@
 from models.user import PermissionModel,RoleModel,PermissionEnum,UserModel
+from models.post import BoardModel,PostModel,CommentModel
 import click
 from exts import db
 
 def welcome():
     click.echo("welcome to my world!")
 
+"""
+    创建初始化角色与权限数据
+"""
 def create_permission():
     # 返回PermissionEnum 类中所有属性名，一个字符串列表
     # for permission_name in dir(PermissionEnum):
@@ -68,6 +72,19 @@ def create_admin(username,email,password):
     db.session.add(admin_user)
     db.session.commit()
     click.echo("管理员创建成功^_^")
+
+"""
+    创建帖子板块的初始数据
+"""
+
+def create_board():
+    boards_name = ['电影','诗词','歌词','文章']
+    for name in boards_name:
+        board = BoardModel(name=name)
+        db.session.add(board)
+    db.session.commit()
+    click.echo('分类板块创建成功')
+
 
 
 

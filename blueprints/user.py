@@ -4,7 +4,9 @@ from exts import mail,cache,db
 import random
 import string
 from forms.register import RegisterForm
+from forms.login import LoginForm
 from models.user import UserModel
+
 
 
 """
@@ -30,10 +32,10 @@ def mail_captcha(email):
 
 @bp.route("/signup",methods=['GET','POST'])
 def signup():
+    form = RegisterForm()
     if request.method == 'GET':
-        return render_template("signup.html")
+        return render_template("signup.html",form=form)
     else:
-        form = RegisterForm()
         # html中的name字段需要和form.   验证类中的相同
         if form.validate():
             email = form.email.data
@@ -42,12 +44,21 @@ def signup():
             user = UserModel(email=email,username=username,password=password)
             db.session.add(user)
             db.session.commit()
-            return redirect(url_for("user.signin"))
+            return redirect(url_for("user.signin"),form=form)
         else:
             for message in form.messages:
                 flash(message)
             return render_template("signup.html", form=form)
         
-@bp.route("/login")
+@bp.route("/login",methods=['GET','POST'])
 def login():
-    return render_template("login.html")
+    form = LoginForm()
+    if request.method == 'GET':
+        return render_template("login.html",form=form)
+    else:
+        if form.validate():
+            return redirect(url_for("front.index"))
+        else:
+            for message in form.messages:
+                flash(message)
+            return render_template("login.html",form=form)

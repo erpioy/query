@@ -1,0 +1,84 @@
+{% extends "base.html" %} {% block title%}发布帖子{% endblock %} {% block head
+%}
+<link
+  href="https://unpkg.com/@wangeditor/editor@latest/dist/css/style.css"
+  rel="stylesheet"
+/>
+<style>
+  #toolbar-container {
+    border-bottom: 1px solid #ccc;
+  }
+  #editor-container {
+    height: 400px;
+  }
+</style>
+{% endblock %}{% block body%}
+<div class="container my-3">
+  <h3 class="text-center">发布帖子</h3>
+  <div class="row justify-content-center">
+    <div class="col-lg-8 my-3">
+      <!-- 点击类型为“type=submit”的按钮，将表单数据提交给对应的url -->
+      <form
+        method="POST"
+        action="{{ url_for('post.public') }}"
+        autocomplete="off"
+      >
+        <input
+          type="text"
+          id="name"
+          name="username"
+          placeholder="标题"
+          class="form-control"
+          required=""
+        />
+        <select name="board_id" class="form-select my-2">
+          {% for board in boards %}
+          <option value={{ board.name }}>{{ board.name }}</option>
+          {% endfor %}
+        </select>
+
+        <div id="editor—wrapper" class="border rounded">
+          <div id="toolbar-container"><!-- 工具栏 --></div>
+          <div id="editor-container"><!-- 编辑器 --></div>
+        </div>
+
+        <div class="my-3 text-center">
+          <button class="btn btn-primary w-100" type="submit">发布</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/@wangeditor/editor@latest/dist/index.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const { createEditor, createToolbar } = window.wangEditor;
+
+    const editorConfig = {
+      placeholder: "Type here...",
+      onChange(editor) {
+        const html = editor.getHtml();
+        console.log("editor content", html);
+        // 也可以同步到 <textarea>
+      },
+    };
+
+    const editor = createEditor({
+      selector: "#editor-container",
+      html: "<p><br></p>",
+      config: editorConfig,
+      mode: "default", // or 'simple'
+    });
+
+    const toolbarConfig = {};
+
+    const toolbar = createToolbar({
+      editor,
+      selector: "#toolbar-container",
+      config: toolbarConfig,
+      mode: "simple", // or 'simple'
+    });
+  });
+</script>
+{% endblock %}
