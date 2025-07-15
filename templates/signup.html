@@ -151,7 +151,6 @@
   cerificiation_btn.addEventListener('click',()=>{
     const input_email = document.querySelector('#email');
     const email = input_email.value;
-    console.log(email);
 
     fetch(`/user/mail/captcha/${email}`)
       .then(response => {

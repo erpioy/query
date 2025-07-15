@@ -15,7 +15,7 @@ class LoginForm(BaseForm):
 
         user = UserModel.query.filter_by(username=username).first()
 
-        if user and user.chuser.check_password(password):
+        if user and user.check_password(password):
             session['user_id'] = user.id
         else:
             raise ValidationError(message="用户名或密码错误！") 

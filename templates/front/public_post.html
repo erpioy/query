@@ -20,65 +20,104 @@
       <!-- 点击类型为“type=submit”的按钮，将表单数据提交给对应的url -->
       <form
         method="POST"
-        action="{{ url_for('post.public') }}"
         autocomplete="off"
       >
+      {{ form.hidden_tag() }}
         <input
           type="text"
-          id="name"
-          name="username"
+          id="title"
+          name="title"
           placeholder="标题"
           class="form-control"
           required=""
         />
-        <select name="board_id" class="form-select my-2">
+        <select name="board_id" class="form-select my-2" id="board_id">
           {% for board in boards %}
-          <option value={{ board.name }}>{{ board.name }}</option>
+          <option value={{ board.id }}>{{ board.name }}</option>
           {% endfor %}
         </select>
 
-        <div id="editor—wrapper" class="border rounded">
+        <div id="editor-wrapper" class="border rounded">
           <div id="toolbar-container"><!-- 工具栏 --></div>
           <div id="editor-container"><!-- 编辑器 --></div>
         </div>
 
         <div class="my-3 text-center">
-          <button class="btn btn-primary w-100" type="submit">发布</button>
+          <button class="btn btn-primary w-100" type="button" id="submit">发布</button>
         </div>
       </form>
     </div>
   </div>
 </div>
 
+<div class="container">
+  <div class="row justify-content-center">
+    <div
+      class="col-md-6 col-lg-4 position-fixed bottom-0 end-0 p-3"
+      style="z-index: 11"
+    >
+      {%with messages = get_flashed_messages() %} {%if messages %}
+      <div class="form-group">
+        <ul>
+          {% for message in messages %}
+          <li class="text-danger">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %} {% endwith %}
+    </div>
+  </div>
+</div>
+
 <script src="https://unpkg.com/@wangeditor/editor@latest/dist/index.js"></script>
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const { createEditor, createToolbar } = window.wangEditor;
 
-    const editorConfig = {
-      placeholder: "Type here...",
-      onChange(editor) {
-        const html = editor.getHtml();
-        console.log("editor content", html);
-        // 也可以同步到 <textarea>
-      },
-    };
 
-    const editor = createEditor({
-      selector: "#editor-container",
-      html: "<p><br></p>",
-      config: editorConfig,
-      mode: "default", // or 'simple'
-    });
+  // 渲染富文本编辑器
+  const { createEditor, createToolbar } = window.wangEditor;
+  const editor = createEditor({
+    selector: '#editor-container',
+    html: '<p><br></p>',
+    placeholder: '请输入内容...',
+    mode: 'simple'
+  });
+  const toolbar = createToolbar({
+    editor: editor,
+    selector: '#toolbar-container',
+    mode: 'simple'
+  });
 
-    const toolbarConfig = {};
+  // 2. 提交事件处理
+  const submit_btn = document.querySelector('#submit');
+  submit_btn.addEventListener('click', async (event) => {
+    // 获取表单数据
+    const data = {
+      title: document.querySelector('#title').value,
+      board_id: document.querySelector('#board_id').value,
+      content: editor.getHtml()
+    }
 
-    const toolbar = createToolbar({
-      editor,
-      selector: "#toolbar-container",
-      config: toolbarConfig,
-      mode: "simple", // or 'simple'
-    });
+    try {
+      const response = await fetch('/post/public',{
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': document.querySelector('input[name="csrf_token"]').value  // 处理CSRF保护
+        },
+        body: JSON.stringify(data)  // 转为JSON格式发送
+      }); 
+    
+    const result = await response.json();
+      if (response.ok) {
+        alert('发布成功！');
+        window.location.href = '/';  // 跳转到首页
+      } else {
+        alert('发布失败：' + result.message);
+      }
+    } catch (error) {
+      console.error('提交失败：', error);
+      alert('网络错误，请重试');
+    }
   });
 </script>
 {% endblock %}

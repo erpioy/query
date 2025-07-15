@@ -9,6 +9,7 @@ from blueprints.post import bp as post_bp
 from flask_migrate import Migrate
 import util.commands as commands
 from util.my_celery import make_celery
+from util.hooks import before_request
 
 app = Flask(__name__)
 
@@ -38,6 +39,9 @@ app.cli.command("create-test-user")(commands.create_test_user)
 app.cli.command("create-admin")(commands.create_admin)
 
 app.cli.command("create-board")(commands.create_board)
+
+# 添加钩子函数，用于验证用户是否登录
+app.before_request(before_request)
 
 # with app.app_context():
     # db.drop_all()
