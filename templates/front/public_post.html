@@ -96,7 +96,7 @@
       board_id: document.querySelector('#board_id').value,
       content: editor.getHtml()
     }
-
+    // response是响应报文
     try {
       const response = await fetch('/post/public',{
         method: 'POST',
@@ -106,7 +106,8 @@
         },
         body: JSON.stringify(data)  // 转为JSON格式发送
       }); 
-    
+    // 获取响应体中的内容
+    // 后端返回 状态行，响应头，响应体
     const result = await response.json();
       if (response.ok) {
         alert('发布成功！');

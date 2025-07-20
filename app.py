@@ -40,6 +40,7 @@ app.cli.command("create-admin")(commands.create_admin)
 
 app.cli.command("create-board")(commands.create_board)
 
+app.cli.command("create-test-post")(commands.create_test_post)
 # 添加钩子函数，用于验证用户是否登录
 app.before_request(before_request)
 

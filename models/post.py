@@ -36,7 +36,9 @@ class CommentModel(db.Model):
     author_id = db.Column(db.String(100),db.ForeignKey("user.id"),nullable=False)
 
     # 建立联系
-    post = db.relationship("PostModel",backref="comments")
+    # 这种 order_by 是查询层的行为，对数据库结构无影响，
+    # 所以不需要 flask db migrate 或 upgrade，保存代码后即可使用。
+    post = db.relationship("PostModel",backref=db.backref("comments",order_by=create_time.desc()))
     author = db.relationship("UserModel",backref="comments")
 
 

@@ -1,0 +1,65 @@
+{% extends "base.html" %} {% block title%}{{ post.title }}{% endblock %} {%
+block head %}
+<link
+  rel="stylesheet"
+  href="https://cdn.staticfile.net/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css"
+/>
+{% endblock %} {% block body%}
+
+<section class="container-lg">
+  <h2 class="text-center">{{ post.title }}</h2>
+  <p class="post-info-group">
+    <span>发表时间： {{ post.create_time }}</span>
+    <span>作者 ： {{ post.author.username }}</span>
+    <span>所属板块： {{ post.board.name }}</span>
+    <span>阅读量 ： {{ post.read_count }}</span>
+    <span>评论数量： {{ post.comments|length }}</span>
+  </p>
+  <article class="post-content" id="post-content">
+    {{ post.content|safe}}
+  </article>
+
+  <form
+    method="POST"
+    action="{{ url_for('post.post_comment',post_id=post.id)}}"
+    autocomplete="off"
+  >
+    {{ form.hidden_tag() }}
+    <!-- 应该包含 csrf_token 字段 -->
+    <div class="my-3">
+      <textarea
+        type="text"
+        class="form-control"
+        placeholder="写点什么..."
+        name="content"
+        rows="1"
+      ></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">
+      <i class="bi bi-send"> 发布</i>
+    </button>
+  </form>
+
+  <div id="comments" class="my-2">
+      {% for comment in post.comments %}
+      <div class="mb-4 border-bottom border-1 pb-2">
+        <div class="card-body">
+          <h5 class="card-title">{{ comment.author.username }}</h5>
+          <small class="card-subtitle mb-2 text-muted">{{ comment.create_time}}</small>
+          <p class="card-text">{{ comment.content }}</p>
+        </div>
+      </div>
+      {% endfor %}
+  </div>
+</section>
+
+<script>
+  const textarea = document.querySelector('textarea[name="content"]');
+
+  textarea.addEventListener("input", function () {
+    this.style.height = "auto"; // 先重置高度
+    this.style.height = this.scrollHeight + "px"; // 设置为内容高度
+  });
+</script>
+
+{% endblock %}

@@ -2,6 +2,8 @@ from models.user import PermissionModel,RoleModel,PermissionEnum,UserModel
 from models.post import BoardModel,PostModel,CommentModel
 import click
 from exts import db
+from faker import Faker
+import random
 
 def welcome():
     click.echo("welcome to my world!")
@@ -86,6 +88,26 @@ def create_board():
     click.echo('分类板块创建成功')
 
 
+"""
+    通过faker库，添加测试数据
+"""
+
+def create_test_post():
+    faker = Faker(locale="zh_CN")
+    author = UserModel.query.first()
+    boards = BoardModel.query.all()
+
+    click.echo("开始生成测试帖子...")
+
+    for x in range(98):
+        title = faker.sentence()
+        content = faker.paragraph(nb_sentences=10)
+        random_index = random.randint(0,3)
+        board = boards[random_index]
+        post = PostModel(title=title,content=content,board=board,author=author)
+        db.session.add(post)
+    db.session.commit()
+    click.echo("测试帖子生成成功")
 
 
 

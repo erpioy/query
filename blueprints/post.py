@@ -1,7 +1,7 @@
-from flask import Blueprint,render_template,request,g
+from flask import Blueprint,render_template,request,g,flash,redirect,url_for
 from models.post import BoardModel,PostModel,CommentModel
 from util.decorators import login_required
-from forms.post import PublicPostForm
+from forms.post import PublicPostForm,CommentForm
 from exts import db
 from util import restful
 
@@ -33,6 +33,29 @@ def public():
             message = form.messages[0]
             return restful.params_error(message=message)
 
+@bp.route('/detail/<int:post_id>')
+def post_detail(post_id):
+    form=CommentForm()
+    post = PostModel.query.get(post_id)
+    post.read_count += 1
+    db.session.commit()
+
+    return render_template("front/post_detail.html",post=post,form=form)
+
+@bp.route('/<int:post_id>/comment',methods=['POST'])
+@login_required
+def post_comment(post_id):
+    form = CommentForm()
+    if form.validate_on_submit():
+        # 获取前端属性为“content”标签中的内容
+        content = form.content.data
+        comment = CommentModel(content=content,post_id=post_id,author=g.user)
+        db.session.add(comment)
+        db.session.commit()
+    else:
+        for message in form.messages:
+            flash(message)
+    return redirect(url_for('post.post_detail',post_id=post_id))
 
 
 
