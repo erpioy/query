@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title%}个人中心{% endblock %}
+{% block head %}{% endblock %}
+{% block body%}
+
+<section class="container">
+    <div>
+        {# 先判断 user 是否存在，不存在则显示提示 #}
+        {% if not user %}
+            <div class="alert alert-danger">用户不存在或已被删除</div>
+        {% else %}
+            <form action="{{ url_for('user.edit_profile') }}" method="post" enctype="multipart/form-data">
+                {# 注意：表单需要添加 method="post" 才能提交数据 #}
+                {{ form.hidden_tag() }}
+                <table class="table table-bordered mt-5">
+                    <tbody>
+                        <tr>
+                            <th width="100px">用户名：</th>
+                            <td>
+                                {% if is_mine %}
+                                    <input type="text" name="username" value="{{ user.username }}">
+                                {% else %}
+                                    {{ user.username }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>头像：</th>
+                            <td>
+                                {# 即使 user 存在，也需判断 email 是否有效 #}
+                                {% if user.avatar %}
+                                    <img src="{{ user.avatar }}" width="200" alt="" >
+                                {% else %}
+                                    {# 邮箱为空时显示默认头像 #}
+                                    <img class="avatar" src="{{ avatars.gravatar(user.email|email_hash)|replace('https://gravatar.com/avatar/', 'https://gravatar.loli.net/avatar/') }}" width="200" alt="用户头像">
+
+                                {% endif %}
+
+                                {% if is_mine %}
+                                    <!-- .jpg 和 .jpeg 都是 JPEG 图像格式 -->
+                                    <input type="file" name="avatar" accept="image/jpeg image/png">
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>签名：</th>
+                            <td>
+                                {% if is_mine %}
+                                    <input type="text" name="signature" value="{{ user.signature or ''}}">
+                                {% else %}
+                                    {{ user.signature or '暂无签名' }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                {% if is_mine %}
+                    <div style="text-align: center;">
+                        <button class="btn btn-primary">保存</button>
+                    </div>
+                {% endif %}
+            </form>
+        {% endif %}
+    </div>
+</section>
+
+{% endblock %}
