@@ -29,12 +29,11 @@ def index():
     pagination = Pagination(bs_version=5,page=page,total=total,outer_window=0,inner_window=2,
                             alignment="center")
     
-
-
     context = {
         "posts": posts,
         "boards": boards,
         "pagination": pagination,
         "current_board": board_id
     }
+    current_app.logger.info("index页面被请求了")
     return render_template("index.html", **context)

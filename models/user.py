@@ -43,6 +43,9 @@ class RoleModel(db.Model):
     permissions = db.relationship("PermissionModel",secondary=role_permission_table,backref="roles")
     users = db.relationship("UserModel",back_populates="role")
 
+    def has_permission(self, permission_enum):
+        return any(perm.name == permission_enum for perm in self.permissions)
+
 # 创建一个user表
 # 把函数传进去，插入时自动调用,每条记录生成一个新的ID  如果使用uuid()，会立即执行函数，所有记录用同一个ID
 class UserModel(db.Model):
@@ -64,6 +67,9 @@ class UserModel(db.Model):
     # 如果这样定义的话，自动在 RoleModel 类中创建反向属性 users，能够使RoleModel类的实例通过“.users”属性访问到绑定了该角色的用户，以列表的形式返回
     # role = db.relationship("RoleModel",backref="users")
     role = db.relationship("RoleModel",back_populates="users")
+
+    def has_permission(self, permission_enum):
+        return self.role and self.role.has_permission(permission_enum)
 
     # *args 元组，**kwargs 字典。args变为一个元组，kwargs变为一个字典
     def __init__(self,*args,**kwargs):

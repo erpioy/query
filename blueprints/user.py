@@ -9,7 +9,6 @@ from forms.user import EditProfileForm
 from models.user import UserModel
 from werkzeug.datastructures import CombinedMultiDict
 from werkzeug.utils import secure_filename
-from flask import send_from_directory
 from util.decorators import login_required
 import os
 
@@ -86,6 +85,7 @@ def profile(user_id):
     
     return render_template("front/profile.html",**context)
 
+# FIXME：点击退出，返回无属性“user”
 @bp.route('/logout')
 def logout():
     session.clear()
@@ -94,6 +94,10 @@ def logout():
 @bp.route('/profile/edit',methods=['GET','POST'])
 @login_required
 def edit_profile():
+    # 实例化表单类，传入提交表单的数据
+    # request 是 Flask 提供的一个全局对象，代表当前的 HTTP 请求
+    # request.form只包含文本字段，request.files只包含文件字段
+    # 
     form = EditProfileForm(CombinedMultiDict([request.form,request.files]))
     if form.validate_on_submit():
         username = form.username.data
@@ -106,7 +110,7 @@ def edit_profile():
             filename = secure_filename(avatar.filename)
             # 拼接头像存储路径
             avatar_path = os.path.join(current_app.config.get("AVATARS_SAVE_PATH"),filename)
-            # 保存文件
+            # 保存文件到指定地址
             avatar.save(avatar_path)
             #设置头像的URL
             #g.user.avatar = url_for("media.media_file",filename=os.path.join("avatars",filename))

@@ -1,0 +1,30 @@
+{% extends "cms/sidebar-mode.html" %} {% block body%}
+<section>
+    <h3>编辑员工</h3>
+    <form method="POST" action="{{ url_for('cms.staff_edit',user_id=target_user.id) }}" autocomplete="off" class="w-25">
+        {{ form.hidden_tag() }}
+        <div class="d-flex align-items-center my-3">
+            <label class="form-label me-2 mb-0">邮箱：</label>
+            <span class="form-control" style="width: auto;">{{ target_user.email }}</span>
+        </div>
+        <div class="my-3">
+            <label class="form-label">员工：</label>
+            <input type="radio" class="form-check-input" name="is_staff" id="staff-yes" value="true" {% if target_user.is_staff %}checked{% endif %}>
+            <label class="form-check-label" for="staff-yes">是</label>
+            <input type="radio" class="form-check-input" name="is_staff" id="staff-no" value="false" {% if not target_user.is_staff %}checked{% endif %}>
+            <label class="form-check-label" for="staff-no">否</label>
+        </div>
+        <label class="form-label">角色：</label>
+        {% for role in roles %}
+            <div class="form-check form-check-inline mb-3">
+                <input type="radio" class="form-check-input" name="role" id="{{ role.id }}" value="{{ role.id }}" {% if target_user.role_id == role.id %}checked{% endif %}>
+                <label class="form-check-label" for="{{ role.id }}">{{ role.name }}</label>
+            </div>
+        {% endfor %}
+        <div class="mb-3 text-center">
+            <input type="submit" class="btn btn-primary w-50" value="确认修改">
+        </div>
+    </form>
+</section>
+
+{% endblock %}

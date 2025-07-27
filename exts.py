@@ -7,3 +7,5 @@ db = SQLAlchemy()
 mail = Mail()
 cache = Cache()
 avatars = Avatars()
+
+

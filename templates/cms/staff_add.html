@@ -1,0 +1,22 @@
+{% extends "cms/sidebar-mode.html" %} {% block body%}
+<section>
+    <h3>添加员工</h3>
+    <form method="POST" action="{{ url_for('cms.staff_add') }}" autocomplete="off" class="w-25">
+        {{ form.hidden_tag() }}
+        <div class="my-3">
+            <input class="form-control" type="email" name="email" placeholder="邮箱地址"></input>
+        </div>
+        <label class="form-label">角色：</label>
+        {% for role in roles %}
+            <div class="form-check form-check-inline mb-3">
+                <input type="radio" class="form-check-input" name="role" id="{{ role.id }}" value="{{ role.id }}">
+                <label class="form-check-label" for="{{ role.id }}">{{ role.name }}</label>
+            </div>
+        {% endfor %}
+        <div class="mb-3 text-center">
+            <input type="submit" class="btn btn-primary w-50" value="提交"></input>
+        </div>
+    </form>
+</section>
+
+{% endblock %}
